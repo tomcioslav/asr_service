@@ -1,0 +1,48 @@
+{
+	"name": "Existing Docker Compose (Extend)",
+	"dockerComposeFile": [
+		"docker-compose.yaml"
+	],
+	"service": "asr_service",
+	"workspaceFolder": "/asr_service",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-python.python",
+				"ms-toolsai.jupyter",
+				"mhutchie.git-graph",
+				"eamodio.gitlens",
+				"ms-azuretools.vscode-docker",
+				"github.vscode-github-actions",
+				"johnpapa.vscode-peacock",
+				"timonwong.shellcheck",
+				"robertz.code-snapshot",
+				"github.copilot"
+			],
+			"settings": {
+				"editor.tabSize": 4,
+				"terminal.integrated.defaultProfile.linux": "zsh",
+				"terminal.integrated.profiles.linux": {
+					"bash": {
+						"path": "bash",
+						"icon": "terminal-bash"
+					},
+					"zsh": {
+						"path": "zsh"
+					},
+					"fish": {
+						"path": "fish"
+					},
+					"tmux": {
+						"path": "tmux",
+						"icon": "terminal-tmux"
+					},
+					"pwsh": {
+						"path": "pwsh",
+						"icon": "terminal-powershell"
+					}
+				}
+			}
+		}
+	}
+}

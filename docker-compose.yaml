@@ -1,0 +1,5 @@
+services:
+  app:
+    build: 
+      context: .
+    command: /bin/sh -c "while sleep 1000; do :; done" 

@@ -1,0 +1,8 @@
+{
+    "workbench.iconTheme": "material-icon-theme",
+    "jupyter.notebookFileRoot": "${workspaceFolder}",
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter"
+    },
+    "python.formatting.provider": "none",
+}

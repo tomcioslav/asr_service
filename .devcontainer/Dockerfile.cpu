@@ -1,0 +1,50 @@
+FROM python:3.11-slim
+
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+
+# Install system dependencies, including Git, ZSH, and wget
+RUN apt-get update \
+    && apt-get install -y git zsh wget \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Poetry
+RUN pip install --no-cache-dir poetry==1.4.2
+
+# Set the working directory in the Docker image
+WORKDIR /asr_service
+
+# Copy the project code into the Docker image
+COPY .  /asr_service/
+
+# Install dependencies using Poetry
+RUN poetry config virtualenvs.create false
+RUN poetry install --no-interaction --no-ansi
+
+# Allow Git to use the safe directory
+RUN git config --global --add safe.directory /asr_service
+
+# Create a non-root user to run the application
+ARG USER_ID=1000
+ARG GROUP_ID=1000
+
+RUN addgroup --gid $GROUP_ID user \
+    && adduser --disabled-password --gecos '' --uid $USER_ID --gid $GROUP_ID user
+
+# Install sudo
+RUN apt-get update && apt-get install -y sudo
+
+# Add user to the sudoers with no password requirement
+RUN echo "user ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/user \
+    && chmod 0440 /etc/sudoers.d/user
+
+# Install and setup Oh My Zsh for the non-root user
+RUN wget https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh -O - | su user -c sh
+
+# Switch to non-root user
+USER user
+
+# Set poetry to not create a virtual environment again (needs to be done for the non-root user)
+RUN poetry config virtualenvs.create false

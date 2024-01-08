@@ -1,0 +1,28 @@
+version: '3.8'
+services:
+  asr_service:
+    build:
+      context: ..
+      
+      dockerfile: ./.devcontainer/Dockerfile.gpu
+      
+      args:
+        USER_ID: 1000
+        GROUP_ID: 1000
+    
+    
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu] 
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+    
+
+    volumes:
+      - ~/.ssh:/home/user/.ssh
+      - ..:/asr_service:cached   
+    command: /bin/sh -c "while sleep 1000; do :; done"  
