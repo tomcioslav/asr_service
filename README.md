@@ -4,22 +4,7 @@ asr_service
 A simple API to run ASR on audio files. You can specify the model size that you want to use. The API will use the models in the models folder based on paths specified in the src/asr_service/config.py file.
 
 ### Getting started
-Just run the project in the devcontainer. Everything is set up for you.
+Just run docker-compose up and the API will be available at localhost:8000.
 
-Project Organization
-```
-
-    ├── LICENSE
-    ├── README.md          <- The top-level README for developers using this project.
-    │
-    ├── data
-    │
-    ├── models             <- Trained and serialized models, model predictions, or model summaries
-    │
-    ├── notebooks          <- Jupyter notebooks.
-    ├── src/asr_service              <- Source code for use in this project.
-    │   ├── __init__.py    <- Makes src a Python module
-    │   │
-    │   ├── config.py      <- A file with basic path configuration
-
-```
+It can use different sizes of Asr engines. The default is the smallest one. To use a different one, just change environment variable in docker-compose.yaml. The available sizes are: small, medium, large.
+The API Will download the models from the internet if they are not available in the paths specified in the config file.
