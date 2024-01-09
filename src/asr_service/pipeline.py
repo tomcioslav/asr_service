@@ -10,13 +10,22 @@ class Pipeline:
 
         match model_params.MODEL_SIZE:
             case "large":
-                model_path = config.paths.MODEL_LARGE
+                if config.paths.MODEL_LARGE.exists():
+                    model_path = config.paths.MODEL_LARGE
+                else:
+                    "openai/whisper-large-v3"
                 processor = AutoProcessor.from_pretrained("openai/whisper-large-v3")
             case "medium":
-                model_path = config.paths.MODEL_MEDIUM
+                if config.paths.MODEL_MEDIUM.exists():
+                    model_path = config.paths.MODEL_MEDIUM
+                else:
+                    "openai/whisper-medium"
                 processor = AutoProcessor.from_pretrained("openai/whisper-medium")
             case "small":
-                model_path = config.paths.MODEL_SMALL
+                if config.paths.MODEL_SMALL.exists():
+                    model_path = config.paths.MODEL_SMALL
+                else:
+                    model_path = "openai/whisper-small"
                 processor = AutoProcessor.from_pretrained("openai/whisper-small")
             
         model = AutoModelForSpeechSeq2Seq.from_pretrained(

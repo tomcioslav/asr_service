@@ -1,7 +1,7 @@
 asr_service
 ==============================
 
-A short description of the project.
+A simple API to run ASR on audio files. You can specify the model size that you want to use. The API will use the models in the models folder based on paths specified in the src/asr_service/config.py file.
 
 ### Getting started
 Just run the project in the devcontainer. Everything is set up for you.
