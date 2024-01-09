@@ -29,7 +29,7 @@ RUN pip install --no-cache-dir poetry==1.4.2
 WORKDIR /asr_service
 
 # Copy the pyproject.toml and other important files into the image
-COPY README.md pyproject.toml  /asr_service/
+COPY README.md pyproject.toml main.py /asr_service/
 COPY models/  /asr_service/models/
 COPY src/asr_service/  /asr_service/src/asr_service/
 
