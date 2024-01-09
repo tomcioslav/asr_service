@@ -4,11 +4,19 @@ import tempfile
 import os
 
 from asr_service.pipeline import Pipeline
+import asr_service.config as config
 
 pipeline = Pipeline()
 
 
-app = FastAPI()
+app = FastAPI(
+    title="ASR API",
+    description=(
+        "This is an API for automatic speech recognition (ASR). "
+        f"It uses {config.model_params.MODEL_SIZE.value} model."
+    ),
+    version="0.1.0",
+)
 
 
 app.add_middleware(

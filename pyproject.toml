@@ -19,6 +19,7 @@ librosa = "^0.10.1"
 torchaudio = "^2.1.2"
 fastapi = "^0.108.0"
 uvicorn = "^0.25.0"
+python-multipart = "^0.0.6"
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.3.2"

@@ -5,19 +5,28 @@ import asr_service.config as config
 
 
 class Pipeline:
-    def __init__(self) -> None:
-        device = "cuda:0" if torch.cuda.is_available() else "cpu"
-        torch_dtype = torch.float16 if torch.cuda.is_available() else torch.float32
+    def __init__(self, model_params: config.ModelParams = config.model_params) -> None:
+        torch_dtype = torch.float16 if model_params.DEVICE == "cuda:0" else torch.float32
 
+        match model_params.MODEL_SIZE:
+            case "large":
+                model_path = config.paths.MODEL_LARGE
+                processor = AutoProcessor.from_pretrained("openai/whisper-large-v3")
+            case "medium":
+                model_path = config.paths.MODEL_MEDIUM
+                processor = AutoProcessor.from_pretrained("openai/whisper-medium")
+            case "small":
+                model_path = config.paths.MODEL_SMALL
+                processor = AutoProcessor.from_pretrained("openai/whisper-small")
+            
         model = AutoModelForSpeechSeq2Seq.from_pretrained(
-            config.paths.WHISPER,
+            model_path,
             torch_dtype=torch_dtype,
             low_cpu_mem_usage=True,
             use_safetensors=True,
         )
-        model.to(device)
+        model.to(model_params.DEVICE)
 
-        processor = AutoProcessor.from_pretrained("openai/whisper-large-v3")
 
         self.pipe = pipeline(
             "automatic-speech-recognition",
@@ -29,7 +38,7 @@ class Pipeline:
             batch_size=16,
             return_timestamps=True,
             torch_dtype=torch_dtype,
-            device=device,
+            device=model_params.DEVICE,
         )
 
     def __call__(self, audio_file_path: str) -> str:
