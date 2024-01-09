@@ -1,5 +1,14 @@
 services:
   app:
-    build: 
+    build:
       context: .
-    command: /bin/sh -c "while sleep 1000; do :; done" 
+    command: "uvicorn main:app --reload"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [ gpu ]
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
