@@ -9,51 +9,58 @@ class Pipeline:
         torch_dtype = torch.float16 if model_params.DEVICE == "cuda:0" else torch.float32
 
         match model_params.MODEL_SIZE:
-            case "large":
-                if config.paths.MODEL_LARGE.exists():
-                    model_path = config.paths.MODEL_LARGE
-                else:
-                    "openai/whisper-large-v3"
-                processor = AutoProcessor.from_pretrained("openai/whisper-large-v3")
-            case "medium":
-                if config.paths.MODEL_MEDIUM.exists():
-                    model_path = config.paths.MODEL_MEDIUM
-                else:
-                    "openai/whisper-medium"
-                processor = AutoProcessor.from_pretrained("openai/whisper-medium")
             case "small":
-                if config.paths.MODEL_SMALL.exists():
-                    model_path = config.paths.MODEL_SMALL
+                model_id = "openai/whisper-small"
+                model_path = config.paths.MODEL_SMALL
+                
+                # Download and save the model and processor to our configured path
+                if not model_path.exists():
+                    processor = AutoProcessor.from_pretrained(model_id)
+                    processor.save_pretrained(model_path)
+                    
+                    model = AutoModelForSpeechSeq2Seq.from_pretrained(
+                        model_id,
+                        torch_dtype=torch_dtype,
+                        low_cpu_mem_usage=True,
+                        use_safetensors=True,
+                    )
+                    model.save_pretrained(model_path)
                 else:
-                    model_path = "openai/whisper-small"
-                processor = AutoProcessor.from_pretrained("openai/whisper-small")
+                    processor = AutoProcessor.from_pretrained(model_path)
+                    model = AutoModelForSpeechSeq2Seq.from_pretrained(
+                        model_path,
+                        torch_dtype=torch_dtype,
+                        low_cpu_mem_usage=True,
+                        use_safetensors=True,
+                    )
             
-        model = AutoModelForSpeechSeq2Seq.from_pretrained(
-            model_path,
-            torch_dtype=torch_dtype,
-            low_cpu_mem_usage=True,
-            use_safetensors=True,
-        )
         model.to(model_params.DEVICE)
-
 
         self.pipe = pipeline(
             "automatic-speech-recognition",
             model=model,
             tokenizer=processor.tokenizer,
             feature_extractor=processor.feature_extractor,
-            max_new_tokens=128,
             chunk_length_s=30,
             batch_size=16,
             return_timestamps=True,
             torch_dtype=torch_dtype,
             device=model_params.DEVICE,
+            generate_kwargs={
+                "language": "en", 
+                "task": "transcribe",
+                "max_new_tokens": 128
+            }
         )
 
-    def __call__(self, audio_file_path: str) -> str:
-        audio, sr = librosa.load(audio_file_path, sr=16_000)
-        pipeline_input = {
-            "raw": audio,
-            "sampling_rate": sr,
-        }
-        return self.pipe(pipeline_input)["text"]
+    def __call__(self, audio_path: str) -> dict:
+        # Load audio and ensure it's mono
+        speech, sr = librosa.load(audio_path, sr=16000, mono=True)
+        
+        # Ensure the audio is properly shaped (should be 1D array)
+        if len(speech.shape) > 1:
+            speech = speech.squeeze()
+
+        return self.pipe(
+            inputs=speech
+        )

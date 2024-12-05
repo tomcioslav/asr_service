@@ -1,9 +1,10 @@
 {
 	"name": "Existing Docker Compose (Extend)",
 	"dockerComposeFile": [
-		"docker-compose.yaml"
+		"../docker-compose.yaml",
+		"docker-compose.yml"
 	],
-	"service": "asr_service",
+	"service": "app",
 	"workspaceFolder": "/asr_service",
 	"customizations": {
 		"vscode": {
@@ -16,8 +17,7 @@
 				"github.vscode-github-actions",
 				"johnpapa.vscode-peacock",
 				"timonwong.shellcheck",
-				"robertz.code-snapshot",
-				"github.copilot"
+				"robertz.code-snapshot"
 			],
 			"settings": {
 				"editor.tabSize": 4,

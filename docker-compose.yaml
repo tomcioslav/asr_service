@@ -2,7 +2,8 @@ services:
   app:
     build:
       context: .
-    command: "uvicorn main:app --host 0.0.0.0 --port 8000"
+    command: "poetry run uvicorn main:app --host 0.0.0.0 --port 8001 --reload"
+    # command: "tail -f /dev/null"
     deploy:
       resources:
         reservations:
@@ -11,7 +12,9 @@ services:
               count: 1
               capabilities: [ gpu ]
     ports:
-      - 8000:8000
+      - 8001:8001
+    volumes:
+      - .:/asr_service:cached
     environment:
       - NVIDIA_VISIBLE_DEVICES=all
       - MODEL_SIZE=small
